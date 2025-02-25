@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تذكير استلام الحوافز</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #03A9F4;
+            --success-color: #4CAF50;
+            --danger-color: #F44336;
+            --dark-color: #333;
+            --light-color: #f4f4f4;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--primary-color);
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1976D2;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #3d8b40;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+        
+        .btn-light {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-light:hover {
+            background-color: #d4d4d4;
+        }
+        
+        .reminder-card {
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .reminder-card h2 {
+            margin-bottom: 20px;
+            color: var(--dark-color);
+        }
+        
+        .reminder-date {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+        
+        .reminder-status {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background-color: #FFF3E0;
+            color: #E65100;
+        }
+        
+        .status-received {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+        
+        .reminder-actions {
+            display: flex;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .reminder-actions button {
+            flex: 1;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .settings-icon {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.2rem;
+            color: #777;
+            cursor: pointer;
+        }
+        
+        .settings-panel {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-date {
+            font-weight: bold;
+        }
+        
+        .history-status {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .tab-nav {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab-button {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: bold;
+            color: #777;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                margin-bottom: 20px;
+                padding: 15px 0;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>تذكير استلام الحوافز</h1>
+            <p>لا تفوت موعد استلام حوافزك الشهرية</p>
+        </div>
+        
+        <div class="tab-nav">
+            <button class="tab-button active" data-tab="home">الرئيسية</button>
+            <button class="tab-button" data-tab="history">السجل</button>
+            <button class="tab-button" data-tab="settings">الإعدادات</button>
+        </div>
+        
+        <div id="home" class="tab-content active">
+            <div class="card reminder-card">
+                <div class="notification-badge" id="notificationBadge">1</div>
+                <h2>موعد استلام الحوافز</h2>
+                <div class="reminder-date" id="nextReminderDate">
+                    20 فبراير 2025
+                </div>
+                <div class="reminder-status status-pending" id="reminderStatus">
+                    في انتظار الاستلام
+                </div>
+                <div class="reminder-actions">
+                    <button class="btn btn-success" id="receivedBtn">
+                        تم الاستلام
+                    </button>
+                    <button class="btn btn-danger" id="notReceivedBtn">
+                        لم يتم الاستلام
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="history" class="tab-content">
+            <div class="card">
+                <h3 class="card-title">سجل استلام الحوافز</h3>
+                <div id="historyList">
+                    <!-- هنا سيتم إضافة التاريخ ديناميكياً -->
+                </div>
+            </div>
+        </div>
+        
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h3 class="card-title">إعدادات التذكير</h3>
+                <div class="form-group">
+                    <label for="reminderDay">يوم التذكير الشهري</label>
+                    <input type="number" id="reminderDay" class="form-control" min="1" max="31" value="20">
+                </div>
+                <div class="form-group">
+                    <label for="reminderTime">وقت التذكير</label>
+                    <input type="time" id="reminderTime" class="form-control" value="09:00">
+                </div>
+                <div class="form-group">
+                    <label for="reminderFrequency">تكرار التذكير (إذا لم يتم الاستلام)</label>
+                    <select id="reminderFrequency" class="form-control">
+                        <option value="1">كل يوم</option>
+                        <option value="2" selected>كل يومين</option>
+                        <option value="3">كل 3 أيام</option>
+                        <option value="7">كل أسبوع</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block" id="saveSettingsBtn">حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // عناصر التبويب
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // عناصر التذكير
+            const nextReminderDateElement = document.getElementById('nextReminderDate');
+            const reminderStatusElement = document.getElementById('reminderStatus');
+            const receivedBtn = document.getElementById('receivedBtn');
+            const notReceivedBtn = document.getElementById('notReceivedBtn');
+            const notificationBadge = document.getElementById('notificationBadge');
+            
+            // عناصر الإعدادات
+            const reminderDayInput = document.getElementById('reminderDay');
+            const reminderTimeInput = document.getElementById('reminderTime');
+            const reminderFrequencyInput = document.getElementById('reminderFrequency');
+            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+            
+            // عنصر سجل الاستلام
+            const historyList = document.getElementById('historyList');
+            
+            // إعدادات افتراضية
+            let settings = {
+                reminderDay: 20,
+                reminderTime: '09:00',
+                reminderFrequency: 2
+            };
+            
+            // حالة التذكير الحالية
+            let currentReminder = {
+                date: null,
+                status: 'pending', // pending, received
+                notifications: 1
+            };
+            
+            // سجل الاستلام
+            let history = [];
+            
+            // تبديل التبويبات
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // إزالة الفئات النشطة من جميع الأزرار والمحتويات
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // إضافة الفئة النشطة إلى الزر والمحتوى المحدد
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // تحميل البيانات المحفوظة
+            loadData();
+            
+            // تعيين الأحداث
+            receivedBtn.addEventListener('click', markAsReceived);
+            notReceivedBtn.addEventListener('click', markAsNotReceived);
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            
+            // تحديث واجهة المستخدم الأولية
+            updateUI();
+            
+            // وظائف التطبيق
+            function loadData() {
+                // تحميل الإعدادات من التخزين المحلي
+                const savedSettings = localStorage.getItem('salaryReminderSettings');
+                if (savedSettings) {
+                    settings = JSON.parse(savedSettings);
+                    reminderDayInput.value = settings.reminderDay;
+                    reminderTimeInput.value = settings.reminderTime;
+                    reminderFrequencyInput.value = settings.reminderFrequency;
+                }
+                
+                // تحميل حالة التذكير الحالية
+                const savedReminder = localStorage.getItem('currentReminder');
+                if (savedReminder) {
+                    currentReminder = JSON.parse(savedReminder);
+                    currentReminder.date = new Date(currentReminder.date);
+                } else {
+                    // إنشاء تذكير جديد إذا لم يكن هناك واحد محفوظ
+                    createNewReminder();
+                }
+                
+                // تحميل سجل الاستلام
+                const savedHistory = localStorage.getItem('reminderHistory');
+                if (savedHistory) {
+                    history = JSON.parse(savedHistory);
+                    renderHistory();
+                }
+                
+                // التحقق من حالة الإشعارات
+                checkNotifications();
+            }
+            
+            function saveData() {
+                // حفظ الإعدادات في التخزين المحلي
+                localStorage.setItem('salaryReminderSettings', JSON.stringify(settings));
+                
+                // حفظ حالة التذكير الحالية
+                localStorage.setItem('currentReminder', JSON.stringify(currentReminder));
+                
+                // حفظ سجل الاستلام
+                localStorage.setItem('reminderHistory', JSON.stringify(history));
+            }
+            
+            function updateUI() {
+                // تحديث تاريخ التذكير القادم
+                if (currentReminder.date) {
+                    nextReminderDateElement.textContent = formatDate(currentReminder.date);
+                }
+                
+                // تحديث حالة التذكير
+                if (currentReminder.status === 'received') {
+                    reminderStatusElement.textContent = 'تم الاستلام';
+                    reminderStatusElement.className = 'reminder-status status-received';
+                    receivedBtn.disabled = true;
+                    notReceivedBtn.disabled = true;
+                } else {
+                    reminderStatusElement.textContent = 'في انتظار الاستلام';
+                    reminderStatusElement.className = 'reminder-status status-pending';
+                    receivedBtn.disabled = false;
+                    notReceivedBtn.disabled = false;
+                }
+                
+                // تحديث شارة الإشعارات
+                if (currentReminder.notifications > 0) {
+                    notificationBadge.textContent = currentReminder.notifications;
+                    notificationBadge.style.display = 'flex';
+                } else {
+                    notificationBadge.style.display = 'none';
+                }
+                
+                // تحديث قائمة السجل
+                renderHistory();
+            }
+            
+            function createNewReminder() {
+                // الحصول على التاريخ الحالي
+                const now = new Date();
+                let year = now.getFullYear();
+                let month = now.getMonth();
+                
+                // إنشاء تاريخ التذكير القادم
+                let reminderDate = new Date(year, month, settings.reminderDay);
+                
+                // إضافة الوقت إلى التاريخ
+                const [hours, minutes] = settings.reminderTime.split(':');
+                reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                
+                // إذا كان التاريخ قد مر، انتقل إلى الشهر التالي
+                if (reminderDate < now) {
+                    month++;
+                    if (month > 11) {
+                        month = 0;
+                        year++;
+                    }
+                    reminderDate = new Date(year, month, settings.reminderDay);
+                    reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                }
+                
+                // تعيين التذكير الجديد
+                currentReminder = {
+                    date: reminderDate,
+                    status: 'pending',
+                    notifications: 1
+                };
+                
+                saveData();
+                updateUI();
+                scheduleNotification();
+            }
+            
+            function markAsReceived() {
+                // تحديث حالة التذكير الحالي
+                currentReminder.status = 'received';
+                currentReminder.notifications = 0;
+                
+                // إضافة إلى السجل
+                history.unshift({
+                    date: new Date(),
+                    reminderDate: currentReminder.date,
+                    status: 'received'
+                });
+                
+                // حفظ البيانات وتحديث واجهة المستخدم
+                saveData();
+                updateUI();
+                
+                // إنشاء تذكير جديد للشهر القادم
+                createNewReminder();
+                
+                // عرض إشعار للمستخدم
+                if ('Notification' in window) {
+                    if (Notification.permission === 'granted') {
+                        new Notification('تم تسجيل استلام الحوافز', {
+                            body: 'تم تحديث سجل استلام الحوافز الخاص بك',
+                            icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png'
+                        });
+                    }
+                }
+            }
+            
+            function markAsNotReceived() {
+                // تحديث تاريخ التذكير التالي بناءً على تكرار التذكير
+                const nextDate = new Date(currentReminder.date);
+                nextDate.setDate(nextDate.getDate() + parseInt(settings.reminderFrequency));
+                
+                // تحديث التذكير الحالي
+                currentReminder.date = nextDate;
+                currentReminder.notifications++;
+                
+                // حفظ البيانات وتحديث واجهة المستخدم
+                saveData();
+                updateUI();
+                scheduleNotification();
+                
+                // عرض إشعار للمستخدم
+                if ('Notification' in window) {
+                    if (Notification.permission === 'granted') {
+                        new Notification('تم تحديث موعد التذكير', {
+                            body: `سيتم تذكيرك مرة أخرى في ${formatDate(nextDate)}`,
+                            icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png'
+                        });
+                    }
+                }
+            }
+            
+            function saveSettings() {
+                // التحقق من صحة المدخلات
+                const day = parseInt(reminderDayInput.value);
+                if (day < 1 || day > 31) {
+                    alert('يرجى إدخال يوم صالح بين 1 و 31');
+                    return;
+                }
+                
+                // تحديث الإعدادات
+                settings.reminderDay = day;
+                settings.reminderTime = reminderTimeInput.value;
+                settings.reminderFrequency = reminderFrequencyInput.value;
+                
+                // حفظ الإعدادات
+                saveData();
+                
+                // إعادة جدولة التذكير التالي
+                createNewReminder();
+                
+                // عرض رسالة تأكيد
+                alert('تم حفظ الإعدادات بنجاح');
+            }
+            
+            function renderHistory() {
+                // إفراغ قائمة السجل
+                historyList.innerHTML = '';
+                
+                // إذا كان السجل فارغاً، اعرض رسالة
+                if (history.length === 0) {
+                    historyList.innerHTML = '<div class="history-item">لا توجد سجلات حتى الآن</div>';
+                    return;
+                }
+                
+                // إضافة كل عنصر إلى السجل
+                history.forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    
+                    const dateElement = document.createElement('div');
+                    dateElement.className = 'history-date';
+                    dateElement.textContent = formatDate(new Date(item.reminderDate));
+                    
+                    const statusElement = document.createElement('div');
+                    statusElement.className = `history-status ${item.status === 'received' ? 'status-received' : 'status-pending'}`;
+                    statusElement.textContent = item.status === 'received' ? 'تم الاستلام' : 'لم يتم الاستلام';
+                    
+                    historyItem.appendChild(dateElement);
+                    historyItem.appendChild(statusElement);
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            function formatDate(date) {
+                if (!(date instanceof Date)) {
+                    date = new Date(date);
+                }
+                
+                const day = date.getDate();
+                const month = date.toLocaleString('ar-EG', { month: 'long' });
+                const year = date.getFullYear();
+                
+                return `${day} ${month} ${year}`;
+            }
+            
+            function checkNotifications() {
+                // طلب إذن الإشعارات إذا لم يتم منحه بعد
+                if ('Notification' in window) {
+                    if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                        Notification.requestPermission();
+                    }
+                }
+                
+                // التحقق من التذكيرات المستحقة
+                const now = new Date();
+                if (currentReminder.date <= now && currentReminder.status === 'pending') {
+                    showNotification();
+                }
+                
+                // جدولة الفحص التالي (كل ساعة)
+                setTimeout(checkNotifications, 3600000);
+            }
+            
+            function showNotification() {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    const notification = new Notification('تذكير استلام الحوافز', {
+                        body: 'حان موعد استلام الحوافز الشهرية. هل تم الاستلام؟',
+                        icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png'
+                    });
+                    
+                    // إظهار التطبيق عند النقر على الإشعار
+                    notification.onclick = function() {
+                        window.focus();
+                    };
+                }
+                
+                // تحديث عدد الإشعارات وحفظ البيانات
+                currentReminder.notifications++;
+                saveData();
+                updateUI();
+            }
+            
+            function scheduleNotification() {
+                // إلغاء أي جدولة سابقة
+                if (window.reminderTimeout) {
+                    clearTimeout(window.reminderTimeout);
+                }
+                
+                // حساب الوقت المتبقي حتى التذكير التالي
+                const now = new Date();
+                const timeUntilReminder = currentReminder.date - now;
+                
+                // جدولة الإشعار إذا كان التاريخ في المستقبل
+                if (timeUntilReminder > 0) {
+                    window.reminderTimeout = setTimeout(showNotification, timeUntilReminder);
+                }
+            }
+            
+            // فحص الإشعارات عند بدء التشغيل وجدولة الإشعارات القادمة
+            checkNotifications();
+            scheduleNotification();
+            
+            // إعداد مستمعي Service Worker للإشعارات في الخلفية
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('service-worker.js')
+                        .then(function(registration) {
+                            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        }, function(err) {
+                            console.log('ServiceWorker registration failed: ', err);
+                        });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
